@@ -6,11 +6,44 @@
 /*   By: bpouchep <bpouchep@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/15 20:25:20 by bpouchep          #+#    #+#             */
-/*   Updated: 2020/07/15 20:25:23 by bpouchep         ###   ########.fr       */
+/*   Updated: 2022/05/07 03:47:35 by bpouchep         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	char	*save;
+
+	if (!dstsize)
+		return (ft_strlen(src));
+	save = (char *)src;
+	dstsize--;
+	while (*src && dstsize--)
+		*dst++ = *src++;
+	*dst = '\0';
+	return (ft_strlen(save));
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	size_t	out_len;
+	char	*out;
+
+	if (!s)
+		return (NULL);
+	if (ft_strlen(s) < start)
+		return (ft_strdup(""));
+	out_len = ft_strlen(s + start);
+	if (out_len < len)
+		len = out_len;
+	out = malloc(len + 1);
+	if (!out)
+		return (NULL);
+	ft_strlcpy(out, s + start, len + 1);
+	return (out);
+}
 
 static int	ft_count_words(const char *s, char c)
 {
