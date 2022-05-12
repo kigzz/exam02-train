@@ -4,6 +4,9 @@
 #include "get_next_line.h"
 #include <fcntl.h>
 
+// LEAK WHEN CTRL C IN FD(0)
+
+
 int 	ft_strlen(char *str)
 {
 	int i = 0;
@@ -32,7 +35,7 @@ char *ft_strjoin(char *s1, char *s2)
 		free(s1);
 		return (NULL);
 	}
-	str = malloc((sizeof(char) * (str_len + 1)));
+	str = malloc(sizeof(char) * (str_len + 1));
 	if (!str)
 		return (NULL);
 	while (s1[i])
@@ -120,29 +123,34 @@ char *ft_save(char *save)
 	}
 	str[k] = '\0';
 	free(save);
+	if (!str[0])
+	{
+		free(str);
+		return (NULL);
+	}
 	return (str);
 }
 
 char *ft_read_and_save(int fd, char *save)
 {
-	char *buff;
 	int n = 1;
+	char buff[BUFFER_SIZE + 1];
 
-	buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buff)
-		return (NULL);
+//	buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+//	if (!buff)
+//		return (NULL);
 	while (!ft_strchr(save, '\n') && n != 0)
 	{
 		n = read(fd, buff, BUFFER_SIZE);
 		if (n == -1)
 		{
-			free(buff);
+//			free(buff);
 			return (NULL);
 		}
 		buff[n] = '\0';
 		save = ft_strjoin(save, buff);
 	}
-	free(buff);
+//	free(buff);
 	return (save);
 }
 
@@ -164,11 +172,11 @@ char *get_next_line(int fd)
 
 int main()
 {
-	int fd = open("42", O_RDONLY);
+//	int fd = open("42", O_RDONLY);
+	int fd = 0;
 	char *str;
 
 	str = get_next_line(fd);
-
 
 	while (str)
 	{
@@ -176,6 +184,18 @@ int main()
 		free(str);
 		str = get_next_line(fd);
 	}
-	free(str);
 	return (0);
 }
+
+//int main()
+//{
+//	char *line;
+//	line = get_next_line(0);
+//	while (line != NULL)
+//	{
+//		printf("%s", line);
+//		free (line);
+//		line = get_next_line(0);
+//	}
+//	return (0);
+//}
